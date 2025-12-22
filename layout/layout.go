@@ -117,28 +117,6 @@ func Id(value string) *Argument {
 	}
 }
 
-// TODO: align by both axis
-func Start() *Argument {
-	return &Argument{
-		Key:   keys.AlignmentArg,
-		Value: keys.Start,
-	}
-}
-
-func Center() *Argument {
-	return &Argument{
-		Key:   keys.AlignmentArg,
-		Value: keys.Center,
-	}
-}
-
-func End() *Argument {
-	return &Argument{
-		Key:   keys.AlignmentArg,
-		Value: keys.End,
-	}
-}
-
 func Layout(root *NodeItem) error {
 	if err := ComputeSize(XAxis, root); err != nil {
 		return err
