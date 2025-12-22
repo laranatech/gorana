@@ -1,8 +1,6 @@
 package layout
 
 import (
-	"fmt"
-
 	"github.com/google/uuid"
 	"github.com/laranatech/gorana/layout/keys"
 )
@@ -61,7 +59,7 @@ func Node(args ...*Argument) *NodeItem {
 		Sizes:    map[Axis]*AxisSize{},
 		Computed: map[Axis]bool{},
 	}
-	for i, arg := range args {
+	for _, arg := range args {
 		switch arg.Key {
 		case keys.GapArg:
 			node.Gap = arg.Value.(float32)
@@ -82,8 +80,6 @@ func Node(args ...*Argument) *NodeItem {
 			node.Alignment = arg.Value.(keys.AlignmentKey)
 		case keys.IdArg:
 			node.Id = arg.Value.(string)
-		default:
-			fmt.Println("unknown arg", i, arg.Key)
 		}
 	}
 
@@ -121,18 +117,24 @@ func Id(value string) *Argument {
 	}
 }
 
-func Layout(root *NodeItem) *NodeItem {
-	err := ComputeSize(XAxis, root)
-	if err != nil {
-		fmt.Println(err.Error())
-		return root
+func Layout(root *NodeItem) error {
+	if err := ComputeSize(XAxis, root); err != nil {
+		return err
 	}
-	err = ComputeSize(YAxis, root)
 
-	ComputePosition(XAxis, root)
-	ComputePosition(YAxis, root)
+	if err := ComputeSize(YAxis, root); err != nil {
+		return err
+	}
 
-	return root
+	if err := ComputePosition(XAxis, root); err != nil {
+		return err
+	}
+
+	if err := ComputePosition(YAxis, root); err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func Test() {
@@ -175,11 +177,9 @@ func Test() {
 		),
 	)
 
-	root = Layout(root)
+	Layout(root)
 
 	output := Export(root)
-
-	fmt.Println("===========")
 
 	PrintNodes(output)
 }
