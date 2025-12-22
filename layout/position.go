@@ -75,5 +75,5 @@ func computeInitialOffset(axis Axis, node *NodeItem, total float32) float32 {
 	case keys.End:
 		return p - node.GetSideByAxis(axis) - (total + totalGap)
 	}
-	return node.GetInitialpaddingByAxis(axis)
+	return p + node.GetInitialpaddingByAxis(axis)
 }
