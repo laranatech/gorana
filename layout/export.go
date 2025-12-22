@@ -1,9 +1,5 @@
 package layout
 
-import (
-	"fmt"
-)
-
 type OutputItem struct {
 	Id       string        `json:"id"`
 	Parent   *OutputItem   `json:"parent"`
@@ -35,18 +31,4 @@ func Export(root *NodeItem) *OutputItem {
 	node.Children = children
 
 	return node
-}
-
-func PrintNodes(node *OutputItem) {
-	fmt.Println(node.Id, node.X, node.Y, node.W, node.H)
-
-	if len(node.Children) > 0 {
-		fmt.Println(":::")
-
-		for _, child := range node.Children {
-			PrintNodes(child)
-		}
-
-		fmt.Println(";;;")
-	}
 }
