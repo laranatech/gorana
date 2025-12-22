@@ -7,7 +7,7 @@ import (
 type OutputItem struct {
 	Id       string       `json:"id"`
 	Parent   *OutputItem  `json:"parent"`
-	Children []OutputItem `json:"children"`
+	Children []*OutputItem `json:"children"`
 	X        float32      `json:"x"`
 	Y        float32      `json:"y"`
 	W        float32      `json:"w"`
@@ -24,12 +24,12 @@ func Export(root *NodeItem) *OutputItem {
 		Parent: nil,
 	}
 
-	children := make([]OutputItem, 0, len(root.Children))
+	children := make([]*OutputItem, 0, len(root.Children))
 
 	for _, child := range root.Children {
 		c := Export(child)
 		c.Parent = node
-		children = append(children, *c)
+		children = append(children, c)
 	}
 
 	node.Children = children
@@ -44,7 +44,7 @@ func PrintNodes(node *OutputItem) {
 		fmt.Println(":::")
 
 		for _, child := range node.Children {
-			PrintNodes(&child)
+			PrintNodes(child)
 		}
 
 		fmt.Println(";;;")
