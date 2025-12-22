@@ -53,7 +53,7 @@ func (node *NodeItem) GetPaddingByAxis(axis Axis) float32 {
 	return node.Padding.Bottom + node.Padding.Top
 }
 
-func (node *NodeItem) GetInitialpaddingByAxis(axis Axis) float32 {
+func (node *NodeItem) GetInitialPaddingByAxis(axis Axis) float32 {
 	if node.Padding == nil {
 		return 0
 	}

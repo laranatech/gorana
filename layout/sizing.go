@@ -262,53 +262,68 @@ func computeGrow(axis Axis, node *NodeItem) error {
 }
 
 func growChildrenAlongAxis(axis Axis, node *NodeItem) error {
-	var totalGrow float32 = 0
-	var takenSide float32 = 0
-	var growing int = 0
-
-	for _, child := range node.Children {
-		if child.IsComputed(axis) {
-			takenSide += child.GetSideByAxis(axis)
-			continue
-		}
-		if !child.IsGrow(axis) {
-			return errors.New("must be computed at this point")
-		}
-		s, _ := child.Sizes[axis]
-
-		totalGrow += s.Value
-		growing += 1
-	}
-
-	if growing == 0 {
-		return nil
-	}
-
 	p := node.GetPaddingByAxis(axis)
+	gap := float32(len(node.Children)-1) * node.Gap
+	w := node.GetSideByAxis(axis)
+	taken := p + gap
 
-	gap := node.Gap * float32(len(node.Children)-1)
-
-	totalSide := node.GetSideByAxis(axis) - p - gap
-	var taken float32 = 0
-	var available float32 = totalSide
+	var totalShare float32 = 0
 
 	for _, child := range node.Children {
 		if !child.IsGrow(axis) {
+			taken += child.GetSideByAxis(axis)
 			continue
 		}
 
 		s, _ := child.Sizes[axis]
 
-		growValue := s.Value
-		side := growValue / totalGrow * available
+		totalShare += s.Value
+	}
 
-		clamped := clampSide(axis, child, side)
-		taken -= clamped
-		child.SetSideByAxis(axis, clamped)
+	available := w - taken
+
+	for {
+		if totalShare == 0 {
+			return nil
+		}
+
+		changed := false
+
+		for _, child := range node.Children {
+			if child.IsComputed(axis) || !child.IsGrow(axis) {
+				continue
+			}
+
+			s, _ := child.Sizes[axis]
+
+			side := s.Value / totalShare * available
+
+			if s.Max > 0 && side > s.Max {
+				child.SetSideByAxis(axis, s.Max)
+				available -= s.Max
+				totalShare -= s.Value
+				child.Computed[axis] = true
+				changed = true
+			}
+		}
+
+		if !changed {
+			break
+		}
+	}
+
+	for _, child := range node.Children {
+		if child.IsComputed(axis) || !child.IsGrow(axis) {
+			continue
+		}
+
+		s, _ := child.Sizes[axis]
+
+		side := s.Value / totalShare * available
+
+		child.SetSideByAxis(axis, side)
 		child.Computed[axis] = true
 	}
-
-	available -= taken
 
 	return nil
 }

@@ -5,13 +5,13 @@ import (
 )
 
 type OutputItem struct {
-	Id       string       `json:"id"`
-	Parent   *OutputItem  `json:"parent"`
+	Id       string        `json:"id"`
+	Parent   *OutputItem   `json:"parent"`
 	Children []*OutputItem `json:"children"`
-	X        float32      `json:"x"`
-	Y        float32      `json:"y"`
-	W        float32      `json:"w"`
-	H        float32      `json:"h"`
+	X        float32       `json:"x"`
+	Y        float32       `json:"y"`
+	W        float32       `json:"w"`
+	H        float32       `json:"h"`
 }
 
 func Export(root *NodeItem) *OutputItem {

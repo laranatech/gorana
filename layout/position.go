@@ -1,6 +1,8 @@
 package layout
 
-import "github.com/laranatech/gorana/layout/keys"
+import (
+	"github.com/laranatech/gorana/layout/keys"
+)
 
 func (node *NodeItem) SetPositionByAxis(axis Axis, value float32) {
 	switch axis {
@@ -26,15 +28,12 @@ func ComputePosition(axis Axis, node *NodeItem) error {
 		node.SetPositionByAxis(axis, 0)
 	}
 
-	err := computeChildrenPositions(axis, node)
-
-	if err != nil {
+	if err := computeChildrenPositions(axis, node); err != nil {
 		return err
 	}
 
 	for _, child := range node.Children {
-		err := ComputePosition(axis, child)
-		if err != nil {
+		if err := ComputePosition(axis, child); err != nil {
 			return err
 		}
 	}
@@ -50,7 +49,8 @@ func computeChildrenPositions(axis Axis, node *NodeItem) error {
 	}
 
 	initialOffset := computeInitialOffset(axis, node, totalSide)
-	var offset float32 = 0
+
+	var offset float32 = initialOffset
 
 	for i, child := range node.Children {
 		if i == 0 || !node.IsAlongAxis(axis) {
@@ -68,6 +68,7 @@ func computeChildrenPositions(axis Axis, node *NodeItem) error {
 func computeInitialOffset(axis Axis, node *NodeItem, total float32) float32 {
 	var totalGap float32 = float32(len(node.Children)-1) * node.Gap
 	p := node.GetPositionByAxis(axis)
+	initialPadding := node.GetInitialPaddingByAxis(axis)
 
 	switch node.Alignment {
 	case keys.Center:
@@ -75,5 +76,5 @@ func computeInitialOffset(axis Axis, node *NodeItem, total float32) float32 {
 	case keys.End:
 		return p - node.GetSideByAxis(axis) - (total + totalGap)
 	}
-	return p + node.GetInitialpaddingByAxis(axis)
+	return p + initialPadding
 }

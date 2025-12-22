@@ -117,23 +117,24 @@ func Id(value string) *Argument {
 	}
 }
 
+// TODO: align by both axis
 func Start() *Argument {
 	return &Argument{
-		Key: keys.AlignmentArg,
+		Key:   keys.AlignmentArg,
 		Value: keys.Start,
 	}
 }
 
 func Center() *Argument {
 	return &Argument{
-		Key: keys.AlignmentArg,
+		Key:   keys.AlignmentArg,
 		Value: keys.Center,
 	}
 }
 
 func End() *Argument {
 	return &Argument{
-		Key: keys.AlignmentArg,
+		Key:   keys.AlignmentArg,
 		Value: keys.End,
 	}
 }
@@ -156,51 +157,4 @@ func Layout(root *NodeItem) error {
 	}
 
 	return nil
-}
-
-func Test() {
-	root := Node(
-		Id("root"),
-		Row(),
-		Width(Fix(640)),
-		Height(Fix(480)),
-		Gap(16),
-		Padding(2),
-		Children(
-			Node(
-				Id("child_1"),
-				Width(Grow(1)),
-				Height(Grow(1)),
-			),
-			Node(
-				Id("child_2"),
-				Width(Grow(2), Max(150)),
-				Height(Grow(1)),
-			),
-			Node(
-				Id("child_3"),
-				Width(Fit()),
-				Gap(8),
-				Padding(2),
-				Children(
-					Node(
-						Id("grandchild_1"),
-						Width(Fix(50)),
-						Height(Fix(50)),
-					),
-					Node(
-						Id("grandchild_2"),
-						Width(Fix(15)),
-						Height(Fix(15)),
-					),
-				),
-			),
-		),
-	)
-
-	Layout(root)
-
-	output := Export(root)
-
-	PrintNodes(output)
 }
