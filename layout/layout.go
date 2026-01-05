@@ -1,8 +1,8 @@
 package layout
 
 import (
-	"github.com/google/uuid"
 	"github.com/laranatech/gorana/layout/keys"
+	"github.com/laranatech/gorana/utils"
 )
 
 type Axis byte
@@ -10,6 +10,10 @@ type Axis byte
 const (
 	XAxis Axis = iota
 	YAxis
+)
+
+const (
+	NodeIdLength = 8
 )
 
 type Box struct {
@@ -96,8 +100,7 @@ func Node(args ...*Argument) *NodeItem {
 	}
 
 	if node.Id == "" {
-		// TODO: uuid.NewString() panics. handle error later
-		node.Id = uuid.NewString()
+		node.Id = utils.RandString(NodeIdLength)
 	}
 
 	return node
