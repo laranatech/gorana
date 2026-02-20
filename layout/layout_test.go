@@ -10,48 +10,42 @@ import (
 )
 
 func TestLayout(t *testing.T) {
-	root := la.Node(
-		la.Id("root"),
-		la.Row(),
-		la.Width(la.Fix(640)),
-		la.Height(la.Fix(480)),
-		la.Gap(16),
-		la.Padding(2),
-		la.Children(
-			la.Node(
-				la.Id("child_1"),
-				la.Width(la.Grow(1)),
-				la.Height(la.Grow(1)),
-			),
-			la.Node(
-				la.Id("child_2"),
-				la.Width(la.Grow(2), la.Max(150)),
-				la.Height(la.Grow(1)),
-			),
-			la.Node(
-				la.Id("child_3"),
-				la.Width(la.Fit()),
-				la.Gap(8),
-				la.Padding(2),
-				la.Children(
-					la.Node(
-						la.Id("grandchild_1"),
-						la.Width(la.Fix(50)),
-						la.Height(la.Fix(50)),
-					),
-					la.Node(
-						la.Id("grandchild_2"),
-						la.Width(la.Fix(15)),
-						la.Height(la.Fix(15)),
-					),
+	root := la.New().
+		Id("root").
+		Row().
+		Width(la.Fix(640)).
+		Height(la.Fix(480)).
+		Gap(16).
+		Padding(2).
+		Children(
+			la.New().
+				Id("child_1").
+				Width(la.Grow(1)).
+				Height(la.Grow(1)),
+			la.New().
+				Id("child_2").
+				Width(la.Grow(2), la.Max(150)).
+				Height(la.Grow(1)),
+			la.New().
+				Id("child_3").
+				Width(la.Fit()).
+				Gap(8).
+				Padding(2).
+				Children(
+					la.New().
+						Id("grandchild_1").
+						Width(la.Fix(50)).
+						Height(la.Fix(50)),
+					la.New().
+						Id("grandchild_2").
+						Width(la.Fix(15)).
+						Height(la.Fix(15)),
 				),
-			),
-		),
-	)
+		)
 
-	la.Layout(root)
+	root.Layout()
 
-	result := la.Export(root)
+	result := root.Export()
 
 	expected := &la.OutputItem{
 		Id: "root",

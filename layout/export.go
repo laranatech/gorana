@@ -10,25 +10,25 @@ type OutputItem struct {
 	H        float32       `json:"h"`
 }
 
-func Export(root *NodeItem) *OutputItem {
-	node := &OutputItem{
-		Id:     root.Id,
-		X:      root.Box.X,
-		Y:      root.Box.Y,
-		W:      root.Box.W,
-		H:      root.Box.H,
+func (n *node) Export() *OutputItem {
+	res := &OutputItem{
+		Id:     n.id,
+		X:      n.box.X,
+		Y:      n.box.Y,
+		W:      n.box.W,
+		H:      n.box.H,
 		Parent: nil,
 	}
 
-	children := make([]*OutputItem, 0, len(root.Children))
+	children := make([]*OutputItem, 0, len(n.children))
 
-	for _, child := range root.Children {
-		c := Export(child)
-		c.Parent = node
+	for _, child := range n.children {
+		c := child.Export()
+		c.Parent = res
 		children = append(children, c)
 	}
 
-	node.Children = children
+	res.Children = children
 
-	return node
+	return res
 }

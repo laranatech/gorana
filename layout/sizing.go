@@ -19,32 +19,32 @@ type AxisSize struct {
 	Axis  Axis
 }
 
-func (node *NodeItem) IsFix(axis Axis) bool {
-	s, ok := node.Sizes[axis]
+func (n *node) IsFix(axis Axis) bool {
+	s, ok := n.sizes[axis]
 	if !ok {
 		return false
 	}
 	return s.Type == keys.FixSize
 }
 
-func (node *NodeItem) IsFit(axis Axis) bool {
-	s, ok := node.Sizes[axis]
+func (n *node) IsFit(axis Axis) bool {
+	s, ok := n.sizes[axis]
 	if !ok {
 		return false
 	}
 	return s.Type == keys.FitSize
 }
 
-func (node *NodeItem) IsGrow(axis Axis) bool {
-	s, ok := node.Sizes[axis]
+func (n *node) IsGrow(axis Axis) bool {
+	s, ok := n.sizes[axis]
 	if !ok {
 		return false
 	}
 	return s.Type == keys.GrowSize
 }
 
-func (node *NodeItem) HasGrowChildren(axis Axis) bool {
-	for _, child := range node.Children {
+func (n *node) HasGrowChildren(axis Axis) bool {
+	for _, child := range n.children {
 		if child.IsGrow(axis) {
 			return true
 		}
@@ -53,27 +53,27 @@ func (node *NodeItem) HasGrowChildren(axis Axis) bool {
 	return false
 }
 
-func (node *NodeItem) SetSideByAxis(axis Axis, value float32) {
+func (n *node) SetSideByAxis(axis Axis, value float32) {
 	switch axis {
 	case XAxis:
-		node.Box.W = value
+		n.box.W = value
 	case YAxis:
-		node.Box.H = value
+		n.box.H = value
 	}
 }
 
-func (node *NodeItem) GetSideByAxis(axis Axis) float32 {
+func (n *node) GetSideByAxis(axis Axis) float32 {
 	switch axis {
 	case XAxis:
-		return node.Box.W
+		return n.box.W
 	case YAxis:
-		return node.Box.H
+		return n.box.H
 	}
 	return 0
 }
 
-func clampSide(axis Axis, node *NodeItem, value float32) float32 {
-	s, ok := node.Sizes[axis]
+func clampSide(axis Axis, n *node, value float32) float32 {
+	s, ok := n.sizes[axis]
 	v := value
 
 	if !ok {
@@ -123,7 +123,7 @@ func Max(value float32) *SizeArgument {
 	}
 }
 
-func Size(axis Axis, args ...*SizeArgument) *Argument {
+func (n *node) Size(axis Axis, args ...*SizeArgument) *node {
 	s := &AxisSize{
 		Axis: axis,
 	}
@@ -141,21 +141,24 @@ func Size(axis Axis, args ...*SizeArgument) *Argument {
 		s.Value = arg.Value
 	}
 
-	return &Argument{
-		Key:   keys.SizeArg,
-		Value: s,
-	}
+	n.sizes[axis] = s
+
+	return n
 }
 
-func Width(args ...*SizeArgument) *Argument {
-	return Size(XAxis, args...)
+func (n *node) Width(args ...*SizeArgument) *node {
+	return n.Size(XAxis, args...)
 }
 
-func Height(args ...*SizeArgument) *Argument {
-	return Size(YAxis, args...)
+func (n *node) Height(args ...*SizeArgument) *node {
+	return n.Size(YAxis, args...)
 }
 
-func ComputeSize(axis Axis, root *NodeItem) error {
+// func (n *node) Depth(args ...*SizeArgument) *node {
+// 	return n.Size(ZAxis, args...)
+// }
+
+func ComputeSize(axis Axis, root *node) error {
 	err := computeFix(axis, root)
 
 	if err != nil {
@@ -173,15 +176,15 @@ func ComputeSize(axis Axis, root *NodeItem) error {
 	return err
 }
 
-func computeFix(axis Axis, node *NodeItem) error {
-	s, _ := node.Sizes[axis]
+func computeFix(axis Axis, n *node) error {
+	s, _ := n.sizes[axis]
 
-	if node.IsFix(axis) {
-		node.SetSideByAxis(axis, s.Value)
-		node.Computed[axis] = true
+	if n.IsFix(axis) {
+		n.SetSideByAxis(axis, s.Value)
+		n.computed[axis] = true
 	}
 
-	for _, child := range node.Children {
+	for _, child := range n.children {
 		err := computeFix(axis, child)
 		if err != nil {
 			return err
@@ -191,30 +194,30 @@ func computeFix(axis Axis, node *NodeItem) error {
 	return nil
 }
 
-func computeFit(axis Axis, node *NodeItem) error {
-	if node.IsComputed(axis) || !node.IsFit(axis) {
-		for _, child := range node.Children {
+func computeFit(axis Axis, n *node) error {
+	if n.IsComputed(axis) || !n.IsFit(axis) {
+		for _, child := range n.children {
 			computeFit(axis, child)
 		}
 		return nil
 	}
 
-	if node.HasGrowChildren(axis) {
-		return errors.New("fit node can't have grow children")
+	if n.HasGrowChildren(axis) {
+		return errors.New("fit n can't have grow children")
 	}
 
-	p := node.GetPaddingByAxis(axis)
+	p := n.GetPaddingByAxis(axis)
 
-	if len(node.Children) == 0 {
-		node.SetSideByAxis(axis, p)
-		node.Computed[axis] = true
+	if len(n.children) == 0 {
+		n.SetSideByAxis(axis, p)
+		n.computed[axis] = true
 		return nil
 	}
 
 	var maxChild float32 = 0
 	var totalChildren float32 = 0
 
-	for _, child := range node.Children {
+	for _, child := range n.children {
 		computeFit(axis, child)
 
 		if child.IsComputed(axis) {
@@ -230,28 +233,28 @@ func computeFit(axis Axis, node *NodeItem) error {
 
 	var side float32 = p
 
-	if node.IsAlongAxis(axis) {
-		side += node.Gap*float32(len(node.Children)-1) + totalChildren
+	if n.IsAlongAxis(axis) {
+		side += n.gap*float32(len(n.children)-1) + totalChildren
 	} else {
 		side += maxChild
 	}
 
-	node.SetSideByAxis(axis, side)
-	node.Computed[axis] = true
+	n.SetSideByAxis(axis, side)
+	n.computed[axis] = true
 
 	return nil
 }
 
-func computeGrow(axis Axis, node *NodeItem) error {
+func computeGrow(axis Axis, n *node) error {
 	var err error
 
-	if node.IsAlongAxis(axis) {
-		err = growChildrenAlongAxis(axis, node)
+	if n.IsAlongAxis(axis) {
+		err = growChildrenAlongAxis(axis, n)
 	} else {
-		err = growChildrenCrossAxis(axis, node)
+		err = growChildrenCrossAxis(axis, n)
 	}
 
-	for _, child := range node.Children {
+	for _, child := range n.children {
 		err := computeGrow(axis, child)
 		if err != nil {
 			return err
@@ -261,21 +264,21 @@ func computeGrow(axis Axis, node *NodeItem) error {
 	return err
 }
 
-func growChildrenAlongAxis(axis Axis, node *NodeItem) error {
-	p := node.GetPaddingByAxis(axis)
-	gap := float32(len(node.Children)-1) * node.Gap
-	w := node.GetSideByAxis(axis)
+func growChildrenAlongAxis(axis Axis, n *node) error {
+	p := n.GetPaddingByAxis(axis)
+	gap := float32(len(n.children)-1) * n.gap
+	w := n.GetSideByAxis(axis)
 	taken := p + gap
 
 	var totalShare float32 = 0
 
-	for _, child := range node.Children {
+	for _, child := range n.children {
 		if !child.IsGrow(axis) {
 			taken += child.GetSideByAxis(axis)
 			continue
 		}
 
-		s, _ := child.Sizes[axis]
+		s, _ := child.sizes[axis]
 
 		totalShare += s.Value
 	}
@@ -289,12 +292,12 @@ func growChildrenAlongAxis(axis Axis, node *NodeItem) error {
 
 		changed := false
 
-		for _, child := range node.Children {
+		for _, child := range n.children {
 			if child.IsComputed(axis) || !child.IsGrow(axis) {
 				continue
 			}
 
-			s, _ := child.Sizes[axis]
+			s, _ := child.sizes[axis]
 
 			side := s.Value / totalShare * available
 
@@ -302,7 +305,7 @@ func growChildrenAlongAxis(axis Axis, node *NodeItem) error {
 				child.SetSideByAxis(axis, s.Max)
 				available -= s.Max
 				totalShare -= s.Value
-				child.Computed[axis] = true
+				child.computed[axis] = true
 				changed = true
 			}
 		}
@@ -312,37 +315,37 @@ func growChildrenAlongAxis(axis Axis, node *NodeItem) error {
 		}
 	}
 
-	for _, child := range node.Children {
+	for _, child := range n.children {
 		if child.IsComputed(axis) || !child.IsGrow(axis) {
 			continue
 		}
 
-		s, _ := child.Sizes[axis]
+		s, _ := child.sizes[axis]
 
 		side := s.Value / totalShare * available
 
 		child.SetSideByAxis(axis, side)
-		child.Computed[axis] = true
+		child.computed[axis] = true
 	}
 
 	return nil
 }
 
-func growChildrenCrossAxis(axis Axis, node *NodeItem) error {
-	for _, child := range node.Children {
+func growChildrenCrossAxis(axis Axis, n *node) error {
+	for _, child := range n.children {
 		if !child.IsGrow(axis) || child.IsComputed(axis) {
 			continue
 		}
 		side := clampSide(axis, child, growCrossAxis(axis, child))
 		child.SetSideByAxis(axis, side)
-		child.Computed[axis] = true
+		child.computed[axis] = true
 	}
 	return nil
 }
 
-func growCrossAxis(axis Axis, node *NodeItem) float32 {
-	if node.Parent == nil || !node.Parent.IsComputed(axis) {
+func growCrossAxis(axis Axis, n *node) float32 {
+	if n.parent == nil || !n.parent.IsComputed(axis) {
 		return 0
 	}
-	return node.Parent.GetSideByAxis(axis) - node.Parent.GetPaddingByAxis(axis)
+	return n.parent.GetSideByAxis(axis) - n.parent.GetPaddingByAxis(axis)
 }

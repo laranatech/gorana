@@ -1,9 +1,5 @@
 package layout
 
-import (
-	"github.com/laranatech/gorana/layout/keys"
-)
-
 type PaddingValue struct {
 	Top    float32 `json:"t"`
 	Bottom float32 `json:"b"`
@@ -11,55 +7,24 @@ type PaddingValue struct {
 	Right  float32 `json:"r"`
 }
 
-func Padding(args ...float32) *Argument {
-	var p *PaddingValue = nil
-	if len(args) == 1 {
-		p = &PaddingValue{
-			Top:    args[0],
-			Bottom: args[0],
-			Left:   args[0],
-			Right:  args[0],
-		}
-	} else if len(args) == 2 {
-		p = &PaddingValue{
-			Top:    args[0],
-			Bottom: args[0],
-			Left:   args[1],
-			Right:  args[1],
-		}
-	} else if len(args) == 4 {
-		p = &PaddingValue{
-			Top:    args[0],
-			Right:  args[1],
-			Bottom: args[2],
-			Left:   args[3],
-		}
-	}
-
-	return &Argument{
-		Key:   keys.PaddingArg,
-		Value: p,
-	}
-}
-
-func (node *NodeItem) GetPaddingByAxis(axis Axis) float32 {
-	if node.Padding == nil {
+func (n *node) GetPaddingByAxis(axis Axis) float32 {
+	if n.padding == nil {
 		return 0
 	}
 
 	if axis == XAxis {
-		return node.Padding.Left + node.Padding.Right
+		return n.padding.Left + n.padding.Right
 	}
-	return node.Padding.Bottom + node.Padding.Top
+	return n.padding.Bottom + n.padding.Top
 }
 
-func (node *NodeItem) GetInitialPaddingByAxis(axis Axis) float32 {
-	if node.Padding == nil {
+func (n *node) GetInitialPaddingByAxis(axis Axis) float32 {
+	if n.padding == nil {
 		return 0
 	}
 
 	if axis == XAxis {
-		return node.Padding.Left
+		return n.padding.Left
 	}
-	return node.Padding.Top
+	return n.padding.Top
 }
