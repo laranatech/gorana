@@ -4,26 +4,15 @@ import (
 	"github.com/laranatech/gorana/layout/keys"
 )
 
-func (node *NodeItem) IsAlongAxis(axis Axis) bool {
-	if axis == XAxis && node.Direction == keys.Row {
+func (n *node) IsAlongAxis(axis Axis) bool {
+	if axis == XAxis && n.direction == keys.Row {
 		return true
 	}
-	if axis == YAxis && node.Direction == keys.Column {
+	if axis == YAxis && n.direction == keys.Column {
+		return true
+	}
+	if axis == ZAxis && n.direction == keys.Stack {
 		return true
 	}
 	return false
-}
-
-func Row() *Argument {
-	return &Argument{
-		Key:   keys.DirectionArg,
-		Value: keys.Row,
-	}
-}
-
-func Column() *Argument {
-	return &Argument{
-		Key:   keys.DirectionArg,
-		Value: keys.Column,
-	}
 }

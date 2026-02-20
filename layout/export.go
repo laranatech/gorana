@@ -6,29 +6,33 @@ type OutputItem struct {
 	Children []*OutputItem `json:"children"`
 	X        float32       `json:"x"`
 	Y        float32       `json:"y"`
+	Z        float32       `json:"z"`
 	W        float32       `json:"w"`
 	H        float32       `json:"h"`
+	D        float32       `json:"d"`
 }
 
-func Export(root *NodeItem) *OutputItem {
-	node := &OutputItem{
-		Id:     root.Id,
-		X:      root.Box.X,
-		Y:      root.Box.Y,
-		W:      root.Box.W,
-		H:      root.Box.H,
+func (n *node) Export() *OutputItem {
+	res := &OutputItem{
+		Id:     n.id,
+		X:      n.cube.X,
+		Y:      n.cube.Y,
+		Z:      n.cube.Z,
+		W:      n.cube.W,
+		H:      n.cube.H,
+		D:      n.cube.D,
 		Parent: nil,
 	}
 
-	children := make([]*OutputItem, 0, len(root.Children))
+	children := make([]*OutputItem, 0, len(n.children))
 
-	for _, child := range root.Children {
-		c := Export(child)
-		c.Parent = node
+	for _, child := range n.children {
+		c := child.Export()
+		c.Parent = res
 		children = append(children, c)
 	}
 
-	node.Children = children
+	res.Children = children
 
-	return node
+	return res
 }

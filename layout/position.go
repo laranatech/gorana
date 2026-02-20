@@ -4,35 +4,39 @@ import (
 	"github.com/laranatech/gorana/layout/keys"
 )
 
-func (node *NodeItem) SetPositionByAxis(axis Axis, value float32) {
+func (n *node) SetPositionByAxis(axis Axis, value float32) {
 	switch axis {
 	case XAxis:
-		node.Box.X = value
+		n.cube.X = value
 	case YAxis:
-		node.Box.Y = value
+		n.cube.Y = value
+	case ZAxis:
+		n.cube.Z = value
 	}
 }
 
-func (node *NodeItem) GetPositionByAxis(axis Axis) float32 {
+func (n *node) GetPositionByAxis(axis Axis) float32 {
 	switch axis {
 	case XAxis:
-		return node.Box.X
+		return n.cube.X
 	case YAxis:
-		return node.Box.Y
+		return n.cube.Y
+	case ZAxis:
+		return n.cube.Z
 	}
 	return 0
 }
 
-func ComputePosition(axis Axis, node *NodeItem) error {
-	if node.IsRoot() {
-		node.SetPositionByAxis(axis, 0)
+func ComputePosition(axis Axis, n *node) error {
+	if n.IsRoot() {
+		n.SetPositionByAxis(axis, 0)
 	}
 
-	if err := computeChildrenPositions(axis, node); err != nil {
+	if err := computeChildrenPositions(axis, n); err != nil {
 		return err
 	}
 
-	for _, child := range node.Children {
+	for _, child := range n.children {
 		if err := ComputePosition(axis, child); err != nil {
 			return err
 		}
@@ -41,40 +45,42 @@ func ComputePosition(axis Axis, node *NodeItem) error {
 	return nil
 }
 
-func computeChildrenPositions(axis Axis, node *NodeItem) error {
+func computeChildrenPositions(axis Axis, n *node) error {
 	var totalSide float32 = 0
 
-	for _, child := range node.Children {
+	for _, child := range n.children {
 		totalSide += child.GetSideByAxis(axis)
 	}
 
-	initialOffset := computeInitialOffset(axis, node, totalSide)
+	initialOffset := computeInitialOffset(axis, n, totalSide)
 
 	var offset float32 = initialOffset
 
-	for i, child := range node.Children {
-		if i == 0 || !node.IsAlongAxis(axis) {
+	for i, child := range n.children {
+		if i == 0 || !n.IsAlongAxis(axis) {
 			child.SetPositionByAxis(axis, initialOffset)
-			offset += node.Gap + child.GetSideByAxis(axis)
+			offset += n.gap + child.GetSideByAxis(axis)
 			continue
 		}
 		child.SetPositionByAxis(axis, offset)
-		offset += node.Gap + child.GetSideByAxis(axis)
+		offset += n.gap + child.GetSideByAxis(axis)
 	}
 
 	return nil
 }
 
-func computeInitialOffset(axis Axis, node *NodeItem, total float32) float32 {
-	var totalGap float32 = float32(len(node.Children)-1) * node.Gap
-	p := node.GetPositionByAxis(axis)
-	initialPadding := node.GetInitialPaddingByAxis(axis)
+func computeInitialOffset(axis Axis, n *node, total float32) float32 {
+	var totalGap float32 = float32(len(n.children)-1) * n.gap
+	p := n.GetPositionByAxis(axis)
+	initialPadding := n.GetInitialPaddingByAxis(axis)
 
-	switch node.Alignment {
+	al, _ := n.alignment[axis]
+
+	switch al {
 	case keys.Center:
-		return p - node.GetSideByAxis(axis) - ((total / 2) + totalGap)
+		return p - n.GetSideByAxis(axis) - ((total / 2) + totalGap)
 	case keys.End:
-		return p - node.GetSideByAxis(axis) - (total + totalGap)
+		return p - n.GetSideByAxis(axis) - (total + totalGap)
 	}
 	return p + initialPadding
 }

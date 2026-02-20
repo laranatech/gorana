@@ -35,4 +35,5 @@ type DirectionKey byte
 const (
 	Row DirectionKey = iota
 	Column
+	Stack
 )
