@@ -7,18 +7,22 @@ import (
 func (n *node) SetPositionByAxis(axis Axis, value float32) {
 	switch axis {
 	case XAxis:
-		n.box.X = value
+		n.cube.X = value
 	case YAxis:
-		n.box.Y = value
+		n.cube.Y = value
+	case ZAxis:
+		n.cube.Z = value
 	}
 }
 
 func (n *node) GetPositionByAxis(axis Axis) float32 {
 	switch axis {
 	case XAxis:
-		return n.box.X
+		return n.cube.X
 	case YAxis:
-		return n.box.Y
+		return n.cube.Y
+	case ZAxis:
+		return n.cube.Z
 	}
 	return 0
 }

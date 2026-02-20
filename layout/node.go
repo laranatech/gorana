@@ -16,7 +16,7 @@ type node struct {
 	padding   *PaddingValue
 	gap       float32
 	sizes     map[Axis]*AxisSize
-	box       Box
+	cube      Cube
 	direction keys.DirectionKey
 	alignment map[Axis]keys.AlignmentKey
 	computed  map[Axis]bool
@@ -101,6 +101,11 @@ func (n *node) Column() *node {
 	return n
 }
 
+func (n *node) Stack() *node {
+	n.direction = keys.Stack
+	return n
+}
+
 func (n *node) Align(axis Axis, alignment keys.AlignmentKey) *node {
 	n.alignment[axis] = alignment
 	return n
@@ -118,9 +123,11 @@ func New() *node {
 
 	n.alignment[XAxis] = keys.Start
 	n.alignment[YAxis] = keys.Start
+	n.alignment[ZAxis] = keys.Start
 
 	n.sizes[XAxis] = &AxisSize{Type: keys.FitSize, Axis: XAxis}
 	n.sizes[YAxis] = &AxisSize{Type: keys.FitSize, Axis: YAxis}
+	n.sizes[ZAxis] = &AxisSize{Type: keys.FitSize, Axis: ZAxis}
 
 	n.id = utils.RandString(NodeIdLength)
 

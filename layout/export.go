@@ -6,17 +6,21 @@ type OutputItem struct {
 	Children []*OutputItem `json:"children"`
 	X        float32       `json:"x"`
 	Y        float32       `json:"y"`
+	Z        float32       `json:"z"`
 	W        float32       `json:"w"`
 	H        float32       `json:"h"`
+	D        float32       `json:"d"`
 }
 
 func (n *node) Export() *OutputItem {
 	res := &OutputItem{
 		Id:     n.id,
-		X:      n.box.X,
-		Y:      n.box.Y,
-		W:      n.box.W,
-		H:      n.box.H,
+		X:      n.cube.X,
+		Y:      n.cube.Y,
+		Z:      n.cube.Z,
+		W:      n.cube.W,
+		H:      n.cube.H,
+		D:      n.cube.D,
 		Parent: nil,
 	}
 

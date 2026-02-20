@@ -56,18 +56,22 @@ func (n *node) HasGrowChildren(axis Axis) bool {
 func (n *node) SetSideByAxis(axis Axis, value float32) {
 	switch axis {
 	case XAxis:
-		n.box.W = value
+		n.cube.W = value
 	case YAxis:
-		n.box.H = value
+		n.cube.H = value
+	case ZAxis:
+		n.cube.D = value
 	}
 }
 
 func (n *node) GetSideByAxis(axis Axis) float32 {
 	switch axis {
 	case XAxis:
-		return n.box.W
+		return n.cube.W
 	case YAxis:
-		return n.box.H
+		return n.cube.H
+	case ZAxis:
+		return n.cube.D
 	}
 	return 0
 }
@@ -154,9 +158,9 @@ func (n *node) Height(args ...*SizeArgument) *node {
 	return n.Size(YAxis, args...)
 }
 
-// func (n *node) Depth(args ...*SizeArgument) *node {
-// 	return n.Size(ZAxis, args...)
-// }
+func (n *node) Depth(args ...*SizeArgument) *node {
+	return n.Size(ZAxis, args...)
+}
 
 func ComputeSize(axis Axis, root *node) error {
 	err := computeFix(axis, root)

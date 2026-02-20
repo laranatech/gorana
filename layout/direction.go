@@ -11,5 +11,8 @@ func (n *node) IsAlongAxis(axis Axis) bool {
 	if axis == YAxis && n.direction == keys.Column {
 		return true
 	}
+	if axis == ZAxis && n.direction == keys.Stack {
+		return true
+	}
 	return false
 }
