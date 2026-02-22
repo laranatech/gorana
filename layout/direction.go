@@ -1,7 +1,7 @@
 package layout
 
 import (
-	"github.com/laranatech/gorana/layout/keys"
+	"larana.tech/go/gorana/layout/keys"
 )
 
 func (n *node) IsAlongAxis(axis Axis) bool {

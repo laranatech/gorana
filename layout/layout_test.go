@@ -6,7 +6,7 @@ import (
 	"strings"
 	"testing"
 
-	la "github.com/laranatech/gorana/layout"
+	la "larana.tech/go/gorana/layout"
 )
 
 func TestLayout(t *testing.T) {

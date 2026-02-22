@@ -1,13 +1,13 @@
 package style
 
 import (
-	"github.com/laranatech/gorana/lareq/fontstyle"
-	"github.com/laranatech/gorana/lareq/fontweight"
-	"github.com/laranatech/gorana/lareq/linecap"
-	"github.com/laranatech/gorana/lareq/linejoin"
-	"github.com/laranatech/gorana/lareq/style/keys"
-	"github.com/laranatech/gorana/lareq/textalign"
-	"github.com/laranatech/gorana/lareq/textbaseline"
+	"larana.tech/go/gorana/lareq/fontstyle"
+	"larana.tech/go/gorana/lareq/fontweight"
+	"larana.tech/go/gorana/lareq/linecap"
+	"larana.tech/go/gorana/lareq/linejoin"
+	"larana.tech/go/gorana/lareq/style/keys"
+	"larana.tech/go/gorana/lareq/textalign"
+	"larana.tech/go/gorana/lareq/textbaseline"
 )
 
 type StyleOption struct {

@@ -3,7 +3,7 @@ package layout
 import (
 	"errors"
 
-	"github.com/laranatech/gorana/layout/keys"
+	"larana.tech/go/gorana/layout/keys"
 )
 
 type SizeArgument struct {

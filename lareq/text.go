@@ -1,6 +1,6 @@
 package lareq
 
-import "github.com/laranatech/gorana/lareq/command"
+import "larana.tech/go/gorana/lareq/command"
 
 type TextOptions struct {
 	Text     string  `json:"t"`
