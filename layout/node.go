@@ -1,8 +1,8 @@
 package layout
 
 import (
-	"github.com/laranatech/gorana/layout/keys"
-	"github.com/laranatech/gorana/utils"
+	"larana.tech/go/gorana/layout/keys"
+	"larana.tech/go/gorana/utils"
 )
 
 const (

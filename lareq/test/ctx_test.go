@@ -3,11 +3,11 @@ package lareq_test
 import (
 	"testing"
 
-	"github.com/laranatech/gorana/lareq"
-	"github.com/laranatech/gorana/lareq/command"
-	"github.com/laranatech/gorana/lareq/linecap"
-	"github.com/laranatech/gorana/lareq/style"
-	"github.com/laranatech/gorana/lareq/style/keys"
+	"larana.tech/go/gorana/lareq"
+	"larana.tech/go/gorana/lareq/command"
+	"larana.tech/go/gorana/lareq/linecap"
+	"larana.tech/go/gorana/lareq/style"
+	"larana.tech/go/gorana/lareq/style/keys"
 )
 
 func TestStxCommandContructor(t *testing.T) {

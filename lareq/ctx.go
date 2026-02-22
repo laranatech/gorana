@@ -3,8 +3,8 @@ package lareq
 import (
 	"slices"
 
-	"github.com/laranatech/gorana/lareq/command"
-	"github.com/laranatech/gorana/lareq/style"
+	"larana.tech/go/gorana/lareq/command"
+	"larana.tech/go/gorana/lareq/style"
 )
 
 // Adds `setCtx` command to queue
