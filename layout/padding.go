@@ -7,7 +7,7 @@ type PaddingValue struct {
 	Right  float32 `json:"r"`
 }
 
-func (n *node) GetPaddingByAxis(axis Axis) float32 {
+func (n *Node) GetPaddingByAxis(axis Axis) float32 {
 	if n.padding == nil {
 		return 0
 	}
@@ -18,7 +18,7 @@ func (n *node) GetPaddingByAxis(axis Axis) float32 {
 	return n.padding.Bottom + n.padding.Top
 }
 
-func (n *node) GetInitialPaddingByAxis(axis Axis) float32 {
+func (n *Node) GetInitialPaddingByAxis(axis Axis) float32 {
 	if n.padding == nil {
 		return 0
 	}

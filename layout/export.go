@@ -12,7 +12,7 @@ type OutputItem struct {
 	D        float32       `json:"d"`
 }
 
-func (n *node) Export() *OutputItem {
+func (n *Node) Export() *OutputItem {
 	res := &OutputItem{
 		Id:     n.id,
 		X:      n.cube.X,

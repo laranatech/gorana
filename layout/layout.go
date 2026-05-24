@@ -24,7 +24,7 @@ type Cube struct {
 	D float32 `json:"d"`
 }
 
-func (n *node) Layout() error {
+func (n *Node) Layout() error {
 	if err := ComputeSize(XAxis, n); err != nil {
 		return err
 	}

@@ -4,7 +4,7 @@ import (
 	"larana.tech/go/gorana/layout/keys"
 )
 
-func (n *node) SetPositionByAxis(axis Axis, value float32) {
+func (n *Node) SetPositionByAxis(axis Axis, value float32) {
 	switch axis {
 	case XAxis:
 		n.cube.X = value
@@ -15,7 +15,7 @@ func (n *node) SetPositionByAxis(axis Axis, value float32) {
 	}
 }
 
-func (n *node) GetPositionByAxis(axis Axis) float32 {
+func (n *Node) GetPositionByAxis(axis Axis) float32 {
 	switch axis {
 	case XAxis:
 		return n.cube.X
@@ -27,7 +27,7 @@ func (n *node) GetPositionByAxis(axis Axis) float32 {
 	return 0
 }
 
-func ComputePosition(axis Axis, n *node) error {
+func ComputePosition(axis Axis, n *Node) error {
 	if n.IsRoot() {
 		n.SetPositionByAxis(axis, 0)
 	}
@@ -45,7 +45,7 @@ func ComputePosition(axis Axis, n *node) error {
 	return nil
 }
 
-func computeChildrenPositions(axis Axis, n *node) error {
+func computeChildrenPositions(axis Axis, n *Node) error {
 	var totalSide float32 = 0
 
 	for _, child := range n.children {
@@ -69,7 +69,7 @@ func computeChildrenPositions(axis Axis, n *node) error {
 	return nil
 }
 
-func computeInitialOffset(axis Axis, n *node, total float32) float32 {
+func computeInitialOffset(axis Axis, n *Node, total float32) float32 {
 	var totalGap float32 = float32(len(n.children)-1) * n.gap
 	p := n.GetPositionByAxis(axis)
 	initialPadding := n.GetInitialPaddingByAxis(axis)

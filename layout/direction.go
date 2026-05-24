@@ -4,7 +4,7 @@ import (
 	"larana.tech/go/gorana/layout/keys"
 )
 
-func (n *node) IsAlongAxis(axis Axis) bool {
+func (n *Node) IsAlongAxis(axis Axis) bool {
 	if axis == XAxis && n.direction == keys.Row {
 		return true
 	}

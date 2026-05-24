@@ -9,10 +9,10 @@ const (
 	NodeIdLength = 8
 )
 
-type node struct {
+type Node struct {
 	id        string
-	parent    *node
-	children  []*node
+	parent    *Node
+	children  []*Node
 	padding   *PaddingValue
 	gap       float32
 	sizes     map[Axis]*AxisSize
@@ -24,11 +24,11 @@ type node struct {
 
 // Computed values
 
-func (n *node) IsRoot() bool {
+func (n *Node) IsRoot() bool {
 	return n.parent == nil
 }
 
-func (n *node) IsComputed(axis Axis) bool {
+func (n *Node) IsComputed(axis Axis) bool {
 	c, ok := n.computed[axis]
 
 	return ok && c
@@ -36,22 +36,22 @@ func (n *node) IsComputed(axis Axis) bool {
 
 // Setters
 
-func (n *node) Id(id string) *node {
+func (n *Node) Id(id string) *Node {
 	n.id = id
 	return n
 }
 
-func (n *node) RandId() *node {
+func (n *Node) RandId() *Node {
 	n.id = utils.RandString(NodeIdLength)
 	return n
 }
 
-func (n *node) Gap(value float32) *node {
+func (n *Node) Gap(value float32) *Node {
 	n.gap = value
 	return n
 }
 
-func (n *node) Padding(args ...float32) *node {
+func (n *Node) Padding(args ...float32) *Node {
 	var p *PaddingValue = nil
 	if len(args) == 1 {
 		p = &PaddingValue{
@@ -81,7 +81,7 @@ func (n *node) Padding(args ...float32) *node {
 	return n
 }
 
-func (n *node) Children(children ...*node) *node {
+func (n *Node) Children(children ...*Node) *Node {
 	for _, child := range children {
 		child.parent = n
 	}
@@ -91,30 +91,30 @@ func (n *node) Children(children ...*node) *node {
 	return n
 }
 
-func (n *node) Row() *node {
+func (n *Node) Row() *Node {
 	n.direction = keys.Row
 	return n
 }
 
-func (n *node) Column() *node {
+func (n *Node) Column() *Node {
 	n.direction = keys.Column
 	return n
 }
 
-func (n *node) Stack() *node {
+func (n *Node) Stack() *Node {
 	n.direction = keys.Stack
 	return n
 }
 
-func (n *node) Align(axis Axis, alignment keys.AlignmentKey) *node {
+func (n *Node) Align(axis Axis, alignment keys.AlignmentKey) *Node {
 	n.alignment[axis] = alignment
 	return n
 }
 
 // constructor
 
-func New() *node {
-	n := &node{
+func New() *Node {
+	n := &Node{
 		sizes:     map[Axis]*AxisSize{},
 		alignment: map[Axis]keys.AlignmentKey{},
 		computed:  map[Axis]bool{},

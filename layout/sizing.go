@@ -19,7 +19,7 @@ type AxisSize struct {
 	Axis  Axis
 }
 
-func (n *node) IsFix(axis Axis) bool {
+func (n *Node) IsFix(axis Axis) bool {
 	s, ok := n.sizes[axis]
 	if !ok {
 		return false
@@ -27,7 +27,7 @@ func (n *node) IsFix(axis Axis) bool {
 	return s.Type == keys.FixSize
 }
 
-func (n *node) IsFit(axis Axis) bool {
+func (n *Node) IsFit(axis Axis) bool {
 	s, ok := n.sizes[axis]
 	if !ok {
 		return false
@@ -35,7 +35,7 @@ func (n *node) IsFit(axis Axis) bool {
 	return s.Type == keys.FitSize
 }
 
-func (n *node) IsGrow(axis Axis) bool {
+func (n *Node) IsGrow(axis Axis) bool {
 	s, ok := n.sizes[axis]
 	if !ok {
 		return false
@@ -43,7 +43,7 @@ func (n *node) IsGrow(axis Axis) bool {
 	return s.Type == keys.GrowSize
 }
 
-func (n *node) HasGrowChildren(axis Axis) bool {
+func (n *Node) HasGrowChildren(axis Axis) bool {
 	for _, child := range n.children {
 		if child.IsGrow(axis) {
 			return true
@@ -53,7 +53,7 @@ func (n *node) HasGrowChildren(axis Axis) bool {
 	return false
 }
 
-func (n *node) SetSideByAxis(axis Axis, value float32) {
+func (n *Node) SetSideByAxis(axis Axis, value float32) {
 	switch axis {
 	case XAxis:
 		n.cube.W = value
@@ -64,7 +64,7 @@ func (n *node) SetSideByAxis(axis Axis, value float32) {
 	}
 }
 
-func (n *node) GetSideByAxis(axis Axis) float32 {
+func (n *Node) GetSideByAxis(axis Axis) float32 {
 	switch axis {
 	case XAxis:
 		return n.cube.W
@@ -76,7 +76,7 @@ func (n *node) GetSideByAxis(axis Axis) float32 {
 	return 0
 }
 
-func clampSide(axis Axis, n *node, value float32) float32 {
+func clampSide(axis Axis, n *Node, value float32) float32 {
 	s, ok := n.sizes[axis]
 	v := value
 
@@ -127,7 +127,7 @@ func Max(value float32) *SizeArgument {
 	}
 }
 
-func (n *node) Size(axis Axis, args ...*SizeArgument) *node {
+func (n *Node) Size(axis Axis, args ...*SizeArgument) *Node {
 	s := &AxisSize{
 		Axis: axis,
 	}
@@ -150,19 +150,19 @@ func (n *node) Size(axis Axis, args ...*SizeArgument) *node {
 	return n
 }
 
-func (n *node) Width(args ...*SizeArgument) *node {
+func (n *Node) Width(args ...*SizeArgument) *Node {
 	return n.Size(XAxis, args...)
 }
 
-func (n *node) Height(args ...*SizeArgument) *node {
+func (n *Node) Height(args ...*SizeArgument) *Node {
 	return n.Size(YAxis, args...)
 }
 
-func (n *node) Depth(args ...*SizeArgument) *node {
+func (n *Node) Depth(args ...*SizeArgument) *Node {
 	return n.Size(ZAxis, args...)
 }
 
-func ComputeSize(axis Axis, root *node) error {
+func ComputeSize(axis Axis, root *Node) error {
 	err := computeFix(axis, root)
 
 	if err != nil {
@@ -180,7 +180,7 @@ func ComputeSize(axis Axis, root *node) error {
 	return err
 }
 
-func computeFix(axis Axis, n *node) error {
+func computeFix(axis Axis, n *Node) error {
 	s, _ := n.sizes[axis]
 
 	if n.IsFix(axis) {
@@ -198,7 +198,7 @@ func computeFix(axis Axis, n *node) error {
 	return nil
 }
 
-func computeFit(axis Axis, n *node) error {
+func computeFit(axis Axis, n *Node) error {
 	if n.IsComputed(axis) || !n.IsFit(axis) {
 		for _, child := range n.children {
 			computeFit(axis, child)
@@ -249,7 +249,7 @@ func computeFit(axis Axis, n *node) error {
 	return nil
 }
 
-func computeGrow(axis Axis, n *node) error {
+func computeGrow(axis Axis, n *Node) error {
 	var err error
 
 	if n.IsAlongAxis(axis) {
@@ -268,7 +268,7 @@ func computeGrow(axis Axis, n *node) error {
 	return err
 }
 
-func growChildrenAlongAxis(axis Axis, n *node) error {
+func growChildrenAlongAxis(axis Axis, n *Node) error {
 	p := n.GetPaddingByAxis(axis)
 	gap := float32(len(n.children)-1) * n.gap
 	w := n.GetSideByAxis(axis)
@@ -335,7 +335,7 @@ func growChildrenAlongAxis(axis Axis, n *node) error {
 	return nil
 }
 
-func growChildrenCrossAxis(axis Axis, n *node) error {
+func growChildrenCrossAxis(axis Axis, n *Node) error {
 	for _, child := range n.children {
 		if !child.IsGrow(axis) || child.IsComputed(axis) {
 			continue
@@ -347,7 +347,7 @@ func growChildrenCrossAxis(axis Axis, n *node) error {
 	return nil
 }
 
-func growCrossAxis(axis Axis, n *node) float32 {
+func growCrossAxis(axis Axis, n *Node) float32 {
 	if n.parent == nil || !n.parent.IsComputed(axis) {
 		return 0
 	}
